@@ -1,0 +1,19 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-node:12-buster-run
+
+WORKDIR /usr/src/app
+
+COPY ./bin/openocd.tar.gz ./
+COPY ./fw/* ./firmware/
+
+RUN install_packages \
+    libftdi-dev \
+    ftdi-eeprom \
+    screen \
+    telnet \
+    jq \
+    && tar -xvzf ./openocd.tar.gz -C . \
+    && cd openocd && ./install.sh
+
+COPY ./src/start.sh ./start.sh
+
+CMD ["bash", "/usr/src/app/start.sh","test.hex","10"]
